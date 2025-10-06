@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistical Analysis of Sri Lankan Cricket Team Decline Since 2015</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .formal-text {
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            font-size: 1.1rem;
+            line-height: 1.9;
+            letter-spacing: 0.3px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            margin-top: 1rem;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-image {
+            display: none;
+        }
+
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #00b4db;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        nav a:hover {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+            background: white;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #00b4db;
+            display: inline-block;
+        }
+
+        .abstract-box {
+            background: linear-gradient(135deg, #e0f7ff 0%, #f0fbff 100%);
+            padding: 2.5rem;
+            border-left: 5px solid #00b4db;
+            border-radius: 15px;
+            margin: 2rem 0;
+            box-shadow: 0 5px 20px rgba(0, 180, 219, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .abstract-box::before {
+            content: '📊';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 4rem;
+            opacity: 0.1;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.4s;
+            box-shadow: 0 6px 20px rgba(0, 180, 219, 0.4);
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .download-btn:hover::before {
+            left: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 180, 219, 0.5);
+        }
+
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .method-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fbff 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-top: 4px solid #00b4db;
+            transition: all 0.4s;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .method-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            transition: left 0.4s;
+            z-index: 0;
+            opacity: 0.9;
+        }
+
+        .method-card:hover::before {
+            left: 0;
+        }
+
+        .method-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 180, 219, 0.3);
+        }
+
+        .method-card:hover h3,
+        .method-card:hover p {
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .method-card h3 {
+            color: #00b4db;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s;
+        }
+
+        .method-card p {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s;
+        }
+
+        .findings-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .findings-list li {
+            padding: 1.2rem;
+            margin: 1rem 0;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+            border-left: 5px solid #ff6b6b;
+            border-radius: 10px;
+            transition: all 0.4s;
+            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.1);
+        }
+
+        .findings-list li:hover {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            transform: translateX(15px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .recommendations-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations-list li {
+            padding: 1.2rem;
+            margin: 1rem 0;
+            background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+            border-left: 5px solid #51cf66;
+            border-radius: 10px;
+            transition: all 0.4s;
+            box-shadow: 0 3px 10px rgba(81, 207, 102, 0.1);
+        }
+
+        .recommendations-list li:hover {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+            color: white;
+            transform: translateX(15px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(81, 207, 102, 0.3);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f0fbff 0%, #ffffff 100%);
+            border-radius: 15px;
+            transition: all 0.4s;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+        }
+
+        .team-member:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 180, 219, 0.3);
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            border: 2px solid #00b4db;
+        }
+
+        .member-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0, 180, 219, 0.3);
+            transition: all 0.4s;
+            overflow: hidden;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .team-member:hover .member-avatar {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+
+        .poster-section {
+            background: #f8f9fa;
+            padding: 3rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .poster-placeholder {
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            margin: 2rem auto;
+            background: white;
+            border: 3px dashed #2a5298;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .upload-instruction {
+            margin-top: 1rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 2rem 5%;
+            margin-top: 4rem;
+        }
+
+        .stats-highlight {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 180, 219, 0.3);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: rotatePattern 20s linear infinite;
+        }
+
+        @keyframes rotatePattern {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stat-box:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 180, 219, 0.5);
+        }
+
+        .stat-box h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-box p {
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero-image {
+                height: 250px;
+                font-size: 2rem;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📊 Statistical Analysis of Sri Lankan Men's Cricket Team</h1>
+        <p>Understanding the Decline Since 2015 Through Data-Driven Research</p>
+        <div class="hero-badge">🏏 Research Project • 2025</div>
+    </header>
+
+    <div class="hero-image"></div>
+
+    <nav>
+        <ul>
+            <li><a href="#abstract">Abstract</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#findings">Key Findings</a></li>
+            <li><a href="#recommendations">Recommendations</a></li>
+            <li><a href="#team">Research Team</a></li>
+            <li><a href="#poster">Poster</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="abstract" class="section">
+            <h2 class="section-title">Abstract</h2>
+            <div class="abstract-box">
+                <p class="formal-text">Since 2015, the Sri Lankan Men's Cricket Team has faced a noticeable decline in performance across all formats. This research aims to uncover the key factors behind this trend using advanced statistical methods. By analyzing batting and bowling efficiency, leadership impact, and overall team dynamics, we provide data-driven insights to identify challenges and recommend strategic improvements.</p>
+                
+                <p style="margin-top: 1.5rem;" class="formal-text"><strong>Research Period:</strong> 2015 - 2025</p>
+                <p class="formal-text"><strong>Focus Areas:</strong> ODIs, T20s, and Test Cricket</p>
+                <p class="formal-text"><strong>Analytical Approach:</strong> Quantitative statistical analysis with qualitative insights</p>
+            </div>
+            
+            <a href="#" class="download-btn" onclick="alert('Please upload your abstract PDF file. This button will link to your file once uploaded.'); return false;">📥 Download Full Abstract (PDF)</a>
+        </section>
+
+        <section id="objective" class="section">
+            <h2 class="section-title">Research Objectives</h2>
+            <p>Our research was designed with the following core objectives:</p>
+            <ul style="margin-left: 2rem; margin-top: 1rem;">
+                <li style="margin: 0.5rem 0;">✅ Conduct an in-depth statistical analysis of the team's performance decline across all formats</li>
+                <li style="margin: 0.5rem 0;">✅ Identify key contributing factors using advanced statistical methodologies</li>
+                <li style="margin: 0.5rem 0;">✅ Compare performance metrics before and after 2015</li>
+                <li style="margin: 0.5rem 0;">✅ Provide actionable recommendations for strategic improvements</li>
+            </ul>
+        </section>
+
+        <section id="methodology" class="section">
+            <h2 class="section-title">Research Methodology</h2>
+            <p>Our analysis employed a comprehensive multi-method approach to ensure robust and reliable findings:</p>
+            
+            <div class="methodology-grid">
+                <div class="method-card">
+                    <h3>📊 Descriptive Statistics</h3>
+                    <p>Analyzed central tendencies, variability, and distribution patterns in performance metrics.</p>
+                </div>
+                <div class="method-card">
+                    <h3>⚖️ Comparative Analysis</h3>
+                    <p>Compared pre-2015 and post-2015 performance across different cricket formats.</p>
+                </div>
+                <div class="method-card">
+                    <h3>🔍 Cluster Analysis</h3>
+                    <p>Identified patterns and groupings in player performance and team dynamics.</p>
+                </div>
+                <div class="method-card">
+                    <h3>📉 Data Visualization</h3>
+                    <p>Created comprehensive visual representations to communicate complex statistical insights.</p>
+                </div>
+            </div>
+
+            <div class="stats-highlight" style="margin-top: 3rem;">
+                <div class="stat-box">
+                    <h3>10+</h3>
+                    <p>Years of Data Analyzed</p>
+                </div>
+                <div class="stat-box">
+                    <h3>3</h3>
+                    <p>Cricket Formats Studied</p>
+                </div>
+                <div class="stat-box">
+                    <h3>100s</h3>
+                    <p>Matches Examined</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="focus-areas" class="section">
+            <h2 class="section-title">Key Focus Areas</h2>
+            <div class="methodology-grid">
+                <div class="method-card">
+                    <h3>🏏🎯 Batting & Bowling Efficiency</h3>
+                    <p>Examined gaps in batting averages, strike rates, bowling economy, and wicket-taking ability.</p>
+                </div>
+                <div class="method-card">
+                    <h3>📅📊 Performance Trends</h3>
+                    <p>Tracked performance trajectories across ODIs, T20s, and Test matches over time.</p>
+                </div>
+                <div class="method-card">
+                    <h3>🏛️👥 Leadership Impact</h3>
+                    <p>Analyzed the influence of captaincy changes and governance issues on team performance.</p>
+                </div>
+                <div class="method-card">
+                    <h3>🌍💪 Competitiveness</h3>
+                    <p>Assessed Sri Lanka's standing in international cricket and competitive balance.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="findings" class="section">
+            <h2 class="section-title">🚨 Major Findings</h2>
+            <p>Our comprehensive analysis revealed several critical insights into the team's decline:</p>
+            
+            <ul class="findings-list">
+                <li><strong>🏆❌ Struggles in Limited-Overs Cricket:</strong> Significant decline in ODI and T20 performance metrics, including win rates, batting consistency, and bowling effectiveness.</li>
+                <li><strong>🎭⚡ Player Performance Inconsistencies:</strong> High variability in individual player contributions, lack of consistent match-winners, and failure to develop new talent pipeline.</li>
+                <li><strong>📉 Test Cricket Challenges:</strong> Difficulty competing against top-tier nations, declining batting averages, and inability to defend home advantage consistently.</li>
+                <li><strong>👥 Leadership Vacuum:</strong> Frequent captaincy changes, administrative instability, and lack of long-term strategic planning affecting team morale and performance.</li>
+                <li><strong>🔄 Transitional Period Issues:</strong> Difficulty replacing legendary players who retired post-2015, inadequate grooming of younger players for international cricket.</li>
+            </ul>
+        </section>
+
+        <section id="recommendations" class="section">
+            <h2 class="section-title">📌 Strategic Recommendations</h2>
+            <p>Based on our findings, we propose the following evidence-based recommendations:</p>
+            
+            <ul class="recommendations-list">
+                <li><strong>✅ Talent Development Programs:</strong> Establish comprehensive youth development systems, improve domestic cricket infrastructure, and create clear pathways from grassroots to international level.</li>
+                <li><strong>✅ Strategic Restructuring:</strong> Implement long-term strategic planning, ensure administrative stability, and develop specialized coaching programs for different formats.</li>
+                <li><strong>✅ Mental Toughness Enhancement:</strong> Invest in sports psychology support, build resilience training programs, and foster a winning culture within the team environment.</li>
+                <li><strong>✅ Data-Driven Decision Making:</strong> Adopt advanced analytics for player selection, utilize performance metrics for strategy development, and implement continuous monitoring systems.</li>
+                <li><strong>✅ Leadership Stability:</strong> Provide longer tenures for captains, develop leadership training programs, and ensure consistency in coaching staff and management.</li>
+            </ul>
+        </section>
+
+        <section id="team" class="section">
+            <h2 class="section-title">👥 Research Team</h2>
+            <p style="text-align: center; margin-bottom: 2rem;">This research was conducted by a dedicated team of researchers committed to understanding and addressing the challenges facing Sri Lankan cricket.</p>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <img src="didula.jpg" alt="Tharindu Senevirathne"> 
+                    </div>
+                    <div class="member-name">Didula Thilakarathna</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Kavindu Dilshan Abeysekara"> -->
+                        KA
+                    </div>
+                    <div class="member-name">Kavindu Dilshan Abeysekara</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Prabhath Manashantha"> -->
+                        PM
+                    </div>
+                    <div class="member-name">Prabhath Manashantha</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Sandupama Wagaarachchige"> -->
+                        SW
+                    </div>
+                    <div class="member-name">Sandupama Wagaarachchige</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Peshala Nimsara"> -->
+                        PN
+                    </div>
+                    <div class="member-name">Peshala Nimsara</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Ruwangi Praboda"> -->
+                        RP
+                    </div>
+                    <div class="member-name">Ruwangi Praboda</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Upeksha Karunarathne"> -->
+                        UK
+                    </div>
+                    <div class="member-name">Upeksha Karunarathne</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Devinda Dilshan"> -->
+                        DD
+                    </div>
+                    <div class="member-name">Devinda Dilshan</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Hashitha Heshan"> -->
+                        HH
+                    </div>
+                    <div class="member-name">Hashitha Heshan</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Member Name 10"> -->
+                        M10
+                    </div>
+                    <div class="member-name">Member Name 10</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <!-- Replace with: <img src="URL_TO_PHOTO" alt="Member Name 11"> -->
+                        M11
+                    </div>
+                    <div class="member-name">Member Name 11</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="poster" class="section">
+            <h2 class="section-title">🖼️ Research Poster Presentation</h2>
+            
+            <div class="poster-section">
+                <p style="font-size: 1.2rem; margin-bottom: 1rem;">Our findings were professionally presented in a comprehensive research poster.</p>
+                
+                <div class="poster-placeholder">
+                    <div style="font-size: 3rem;">🖼️</div>
+                    <p>Research Poster Will Be Displayed Here</p>
+                    <p style="font-size: 0.9rem; margin-top: 1rem; color: #999;">Upload your poster image to display it here</p>
+                </div>
+                
+                <p class="upload-instruction">📸 To add your poster and team photos: Replace the placeholder sections with your actual images by editing the HTML.</p>
+                
+                <a href="#" class="download-btn" onclick="alert('Please upload your poster PDF. This button will link to your file once uploaded.'); return false;">📥 Download Research Poster (PDF)</a>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">📧 Contact & Collaboration</h2>
+            <div class="abstract-box">
+                <p>For inquiries about this research, potential collaborations, or access to detailed datasets and analysis, please reach out to our research team.</p>
+                <p style="margin-top: 1rem;"><strong>Keywords:</strong> Cricket Analytics, Sports Statistics, Performance Analysis, Sri Lankan Cricket, Data Science</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Sri Lankan Cricket Research Team. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Statistical Analysis | Data-Driven Insights | Sports Research</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        const teamMembers = document.querySelectorAll('.team-member');
+        teamMembers.forEach((member, index) => {
+            member.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>
